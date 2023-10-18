@@ -10,7 +10,6 @@ window.addEventListener('DOMContentLoaded', () => {
     function hideTabContect() {
         tabscontent.forEach(item => {
             item.style.display = 'none';
-
         });
 
         tabs.forEach(item => {
@@ -71,7 +70,7 @@ window.addEventListener('DOMContentLoaded', () => {
             minutes = timer.querySelector('#minutes'),
             seconds = timer.querySelector('#seconds'),
             timeInterval = setInterval(updateClock, 1000);
-        updateClock(); 
+        updateClock();
         function updateClock() {
             const t = getTimeRemaining(endTime);
             days.innerHTML = makeNum(t.days);
@@ -86,4 +85,42 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     setClock('.timer', deadline);
+
+    // MODAL
+
+    const modalOpenBtn = document.querySelectorAll('[data-modalOpen]'),
+        modalCloseBtn = document.querySelector('[data-modalClose]'),
+        modal = document.querySelector('[data-modal]');
+
+    function openModal(selector) {
+        modalOpenBtn.forEach(item => {
+            item.addEventListener('click', () => {
+                selector.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+        });
+    };
+
+    function closeModal(selector) {
+        selector.style.display = 'none';
+        document.body.style.overflow = '';
+    };
+
+    modalCloseBtn.addEventListener('click', () => {
+        closeModal(modal);
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            closeModal(modal);
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.code === "Escape" && modal.style.display === 'block') {
+            closeModal(modal);
+        }
+    })
+    openModal(modal);
+
 })
