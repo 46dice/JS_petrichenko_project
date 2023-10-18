@@ -58,7 +58,7 @@ window.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    function makeNum(num) {
+    function makeNum(num) {   //проверка числа на 2 цифры, подставление "0"
         if (num >= 0 && num < 10) {
             return `0${num}`;
         } else return num;
@@ -71,7 +71,7 @@ window.addEventListener('DOMContentLoaded', () => {
             minutes = timer.querySelector('#minutes'),
             seconds = timer.querySelector('#seconds'),
             timeInterval = setInterval(updateClock, 1000);
-        updateClock();
+        updateClock(); 
         function updateClock() {
             const t = getTimeRemaining(endTime);
             days.innerHTML = makeNum(t.days);
