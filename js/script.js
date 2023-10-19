@@ -1,4 +1,4 @@
-'user strict'
+'use strict'
 
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -93,18 +93,22 @@ window.addEventListener('DOMContentLoaded', () => {
         modal = document.querySelector('[data-modal]');
 
     function openModal(selector) {
-        modalOpenBtn.forEach(item => {
-            item.addEventListener('click', () => {
-                selector.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-            });
-        });
+        selector.style.display = 'block';
+        document.body.style.overflow = 'hidden';
     };
 
     function closeModal(selector) {
         selector.style.display = 'none';
         document.body.style.overflow = '';
     };
+
+
+
+    modalOpenBtn.forEach(item => {
+        item.addEventListener('click', () => {
+            openModal(modal);
+        });
+    });
 
     modalCloseBtn.addEventListener('click', () => {
         closeModal(modal);
@@ -120,7 +124,93 @@ window.addEventListener('DOMContentLoaded', () => {
         if (e.code === "Escape" && modal.style.display === 'block') {
             closeModal(modal);
         }
-    })
-    openModal(modal);
+    });
 
+    function openModalByScroll() {
+        if (document.documentElement.scrollTop + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
+            openModal(modal);
+            window.removeEventListener('scroll', openModalByScroll);
+        }
+    };
+
+    window.addEventListener('scroll', openModalByScroll);
+
+    // //
+    // // function User(name, id) {
+    // //     this.name = name;
+    // //     this.id = id;
+    // //     this.admin = false;
+    // // }
+
+    // // const alex = new User('alex', 23);
+    // // const ivan = new User('Ivan', 1);
+    // // console.log(alex);
+    // // console.log(ivan);
+
+    // // function showThis(a, b) {
+    // //     console.log(this);
+
+    // //     function sum() {
+    // //         console.log(this);
+    // //         return a + b;
+    // //     }
+    // //     console.log(sum());
+    // // }
+    // // showThis(4, 5);
+
+    // const obj = {
+    //     a: 20,
+    //     b: 15,
+    //     sum: function () {
+
+    //         function shout() {
+    //             console.log(this);
+    //         }
+    //         shout();
+    //     }
+    // };
+    // obj.sum();
+
+    // // function User(name, id) {
+    // //     this.name = name;
+    // //     this.id = id;
+    // //     this.admin = false;
+    // // }
+
+    // // const alex = new User('alex', 23);
+
+    // function sayName(surname) {
+    //     console.log(this);
+    //     console.log(this.name + surname);
+    // }
+
+    // const user = {
+    //     name: 'Nadya',
+    // };
+
+    // sayName.call(user, 'MATULYAK');
+    // sayName.apply(user, ['MATULYAK']);
+
+    // function count(num) {
+    //     return this * num
+    // }
+    // const double = count.bind(2)
+    // console.log(double(2));
+    // console.log(double(12));
+    // // 1) Обычная функция: this - window, но если 'use strict' - undefined
+    // // 2) Контекст(this) у методов объекта - сам объект
+    // // 3) this в конструкторах и классах - это новый экземпляр объекта
+    // // 4) a. .bind() создаёт новую функцию и подвязывает контекст(this). В примере мы забиндили цифру 2 в контекст(this)
+    // //   b. call() и apply() вручную присваивают контекст
+
+    // const obj2 = {
+    //     num: 5,
+    //     sayNumber: function () {
+    //         const say = () => {
+    //             console.log(this); //Контекст(this) - это родитель стрелочной! функции. Контекст sayNumber = obj2
+    //         }
+
+    //         say(); 
+    //     }
+    // };
 })
