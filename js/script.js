@@ -138,15 +138,17 @@ window.addEventListener('DOMContentLoaded', () => {
     //Классы
 
     class MenuCard {
-        constructor(src, alt, title, descr, price, parentSelector) {
+        constructor(src, alt, title, descr, price, parentSelector, ...classes) {
             this.src = src;
             this.alt = alt;
             this.title = title;
             this.descr = descr;
             this.price = price;
-            this.parentSelector = document.querySelector(parentSelector)
+            this.parentSelector = document.querySelector(parentSelector);
+            this.classes = classes;
             this.courseValute = 10;
-            this.changeUAH()
+            this.changeUAH();
+            this.element = 'menu__item';
         }
 
         changeUAH() {
@@ -155,8 +157,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
         render() {
             const element = document.createElement('div');
+            element.classList.add(this.element, ...this.classes);
+
             element.innerHTML = `
-            <div class="menu__item">
                     <img src=${this.src} alt=${this.alt}>
                     <h3 class="menu__item-subtitle">${this.title}</h3>
                     <div class="menu__item-descr">${this.descr}</div>
@@ -165,8 +168,7 @@ window.addEventListener('DOMContentLoaded', () => {
                         <div class="menu__item-cost">Цена:</div>
                         <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
                     </div>
-                </div>
-            `
+                    `
             this.parentSelector.append(element);
         }
     }
@@ -176,7 +178,8 @@ window.addEventListener('DOMContentLoaded', () => {
         'Меню "Фитнес"',
         'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
         22,
-        '.menu .container'
+        '.menu .container',
+        'big'
     ).render();
 
     new MenuCard(
@@ -196,6 +199,34 @@ window.addEventListener('DOMContentLoaded', () => {
         23,
         '.menu .container'
     ).render();
+
+    //AJAX, Сервер
+
+    const inputRub = document.querySelector('#rub'),
+        inputUsd = document.querySelector('#usd');
+
+    inputRub.addEventListener('input', () => {
+        const request = new XMLHttpRequest();
+
+        request.open('GET', 'js/current.json'); //собирает настройки которые помогут сделать запрос (method, url, async, login, password)
+        request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+        request.send(); //отправляет запрос
+
+        request.addEventListener('readystatechange', () => { // Отслеживает готовность запроса в данный текущий момент
+            if (request.status === 200 && request.readyState === 4) { // Так же обработчик событий 'load' срабатывает когда запрос завершен. Readystate() не нужен
+                const data = JSON.parse(request.response);
+                inputUsd.value = (+inputRub.value / data.current.usd).toFixed(2);
+
+            } else {
+                inputUsd.value='Что-то пошло не так...';
+            }
+        });
+        //Свойства XMLHttpRequest(): status, 
+        // statusText(например: 404 not found), 
+        // response - Ответ от сервера. 
+        // readyState - Состояние. 4 Состояний
+
+    })
     // //
     // // function User(name, id) {
     // //     this.name = name;
