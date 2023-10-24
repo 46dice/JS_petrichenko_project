@@ -218,91 +218,61 @@ window.addEventListener('DOMContentLoaded', () => {
                 inputUsd.value = (+inputRub.value / data.current.usd).toFixed(2);
 
             } else {
-                inputUsd.value='Что-то пошло не так...';
+                inputUsd.value = 'Что-то пошло не так...';
             }
         });
-        //Свойства XMLHttpRequest(): status, 
-        // statusText(например: 404 not found), 
-        // response - Ответ от сервера. 
-        // readyState - Состояние. 4 Состояний
+    });
 
+    const forms = document.querySelectorAll('form');
+
+    const objectMessages = {
+        success: 'Выполнено. Мы с вами свяжемся',
+        loading: 'Идёт загрузка',
+        failure: 'Что-то пошло не так',
+    }
+    forms.forEach(form => {
+        postForm(form);
     })
-    // //
-    // // function User(name, id) {
-    // //     this.name = name;
-    // //     this.id = id;
-    // //     this.admin = false;
-    // // }
 
-    // // const alex = new User('alex', 23);
-    // // const ivan = new User('Ivan', 1);
-    // // console.log(alex);
-    // // console.log(ivan);
+    function postForm(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-    // // function showThis(a, b) {
-    // //     console.log(this);
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+            request.setRequestHeader("Content-Type", "application/json");
 
-    // //     function sum() {
-    // //         console.log(this);
-    // //         return a + b;
-    // //     }
-    // //     console.log(sum());
-    // // }
-    // // showThis(4, 5);
+            const formData = new FormData(form); // у inputoв должны присутствовать атрибут "name"!!! FormData() позволяет сформировать данные кототрые заполнил пользователь. Ключ: значение. 
+            const object = {};
+            formData.forEach((value, key) => {
+                object[key] = value;
+            });
 
-    // const obj = {
-    //     a: 20,
-    //     b: 15,
-    //     sum: function () {
+            request.send(JSON.stringify(object)); // отправляем на сервем методом send()
 
-    //         function shout() {
-    //             console.log(this);
-    //         }
-    //         shout();
-    //     }
-    // };
-    // obj.sum();
+            const statusMessage = document.createElement('div'); //создание окошка, которое показывает статус запроса
+            statusMessage.classList.add('messageFormWindow');
+            statusMessage.innerHTML = `${objectMessages.loading}`;
+            form.append(statusMessage);
 
-    // // function User(name, id) {
-    // //     this.name = name;
-    // //     this.id = id;
-    // //     this.admin = false;
-    // // }
+            request.addEventListener('load', () => {
+                if (request.status === 200) {
+                    console.log(request.response);
+                    statusMessage.innerHTML = `${objectMessages.success}`;
+                    form.reset();
 
-    // // const alex = new User('alex', 23);
+                    setInterval(() => {
+                        statusMessage.innerHTML = ""
+                    }, 2000);
+                } else {
+                    statusMessage.innerHTML = `${objectMessages.failure}`;
 
-    // function sayName(surname) {
-    //     console.log(this);
-    //     console.log(this.name + surname);
-    // }
+                    setInterval(() => {
+                        statusMessage.innerHTML = ""
+                    }, 2000);
+                }
+            });
+        });
+    }
 
-    // const user = {
-    //     name: 'Nadya',
-    // };
-
-    // sayName.call(user, 'MATULYAK');
-    // sayName.apply(user, ['MATULYAK']);
-
-    // function count(num) {
-    //     return this * num
-    // }
-    // const double = count.bind(2)
-    // console.log(double(2));
-    // console.log(double(12));
-    // // 1) Обычная функция: this - window, но если 'use strict' - undefined
-    // // 2) Контекст(this) у методов объекта - сам объект
-    // // 3) this в конструкторах и классах - это новый экземпляр объекта
-    // // 4) a. .bind() создаёт новую функцию и подвязывает контекст(this). В примере мы забиндили цифру 2 в контекст(this)
-    // //   b. call() и apply() вручную присваивают контекст
-
-    // const obj2 = {
-    //     num: 5,
-    //     sayNumber: function () {
-    //         const say = () => {
-    //             console.log(this); //Контекст(this) - это родитель стрелочной! функции. Контекст sayNumber = obj2
-    //         }
-
-    //         say(); 
-    //     }
-    // };
 })
